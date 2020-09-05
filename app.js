@@ -1,3 +1,9 @@
+
+
+
+// STRETCH GOALS
+// - increase speed after every drop down
+
 $(document).ready(() => {
     const gameGrid = $(".game-grid div");
     const width = 12;
@@ -5,8 +11,8 @@ $(document).ready(() => {
 
     // aliens
     let alienTraverse = [
-        19, 20, 21,
-        31, 32, 33
+        16, 17, 18, 19, 20, 21,
+        28, 29, 30, 31, 32, 33
         // 12, 13, 14, 15, 16, 17, 18, 19,
         // 24, 25, 26, 27, 28, 29, 30, 31,
     ]
@@ -19,31 +25,38 @@ $(document).ready(() => {
     let dir = 0;
 
     let time = 0;
-    window.setInterval(function () {
+    window.setInterval(() => {
+        // escape condition for testing
         if (time > 12) return;
         time++;
 
+        // find the conditions when the invaders are at the edge
         const leftEdge = alienTraverse[0] % width;
-        const rghtEdge = (alienTraverse[alienTraverse.length - 1] + 1) % (width);
-        console.log(`left: ${leftEdge} // right: ${rghtEdge}`);
+        const rghtEdge = (alienTraverse[alienTraverse.length - 1] + 1) % width;
 
-        if ((rghtEdge === 0) || dir === -1) {
+        // if the invaders are at the edge, move down
+        if ((rghtEdge === 0 && dir === 1) || (leftEdge === 0 && dir === -1)) {
+            dir = width;
+            // if the right edge has been reached, or the invaders are already moving <<, move <<
+        } else if (rghtEdge === 0 || dir === -1) {
             dir = -1;   // <<
+            // when the invaders reach the left edge, reverse direction >>
             if (leftEdge === 0) {
                 dir = 1;
             }
+            // if the invaders are not at the right edge, and are not already moving <<, move >>
         } else dir = 1; // >>
 
+        // removes all the invaders from the grid; increment the positions accordingly
         for (let i = 0; i < alienTraverse.length; i++) {
             gameGrid.eq(alienTraverse[i]).removeClass("invader");
             alienTraverse[i] += dir;
         }
+        // adds the invaders back onto the grid in their new spot
         for (let i = 0; i < alienTraverse.length; i++) {
             gameGrid.eq(alienTraverse[i]).addClass("invader");
         }
-    }, 900)
-
-
+    }, 900);
 
     // spaceship default
     let spaceshipTraverse = (width * height) - (width / 2);
@@ -63,5 +76,20 @@ $(document).ready(() => {
                 break;
         }
         gameGrid.eq(spaceshipTraverse).addClass("spaceship");
+
+        // on [spacebar] shoot laser
+        if (e.which === 32) {
+            let laser = spaceshipTraverse - 12;
+            gameGrid.eq(laser).addClass("laser");
+            // window.setInterval(() => {
+            for (let i = 0; i < height - 2; i++) {
+                gameGrid.eq(laser).removeClass("laser");
+                laser -= 12;
+                console.log(laser);
+                gameGrid.eq(laser).addClass("laser");
+            }
+            // }, 500);
+        }
     });
-});
+
+}); // document ready
