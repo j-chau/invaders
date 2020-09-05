@@ -5,45 +5,43 @@ $(document).ready(() => {
 
     // aliens
     let alienTraverse = [
-        [20, 21, 22],
-        [32, 33, 34]
+        19, 20, 21,
+        31, 32, 33
         // 12, 13, 14, 15, 16, 17, 18, 19,
         // 24, 25, 26, 27, 28, 29, 30, 31,
     ]
     for (i = 0; i < alienTraverse.length; i++) {
-        alienTraverse[i].forEach((pos) => {
+        alienTraverse.forEach((pos) => {
             gameGrid.eq(pos).addClass("invader");
         });
     }
+
+    let dir = 0;
+
     let time = 0;
-    window.setInterval(() => {
+    window.setInterval(function () {
+        if (time > 12) return;
         time++;
-        if (time > 3) {
-            return;
-        }
-        // alienTraverse.forEach((pos) => {
-        // gameGrid.eq(pos).removeClass("invader");
-        // gameGrid.eq(pos).addClass("invader");
-        // console.log(pos + " // " + (pos + 1));
-        // console.log(alienTraverse[pos]);
-        // pos is the value in the array, not the position in the array
-        // });
 
-        for (i = 0; i < alienTraverse.length; i++) {
-            alienTraverse[i].forEach((pos) => gameGrid.eq(pos).removeClass("invader"));
+        const leftEdge = alienTraverse[0] % width;
+        const rghtEdge = (alienTraverse[alienTraverse.length - 1] + 1) % (width);
+        console.log(`left: ${leftEdge} // right: ${rghtEdge}`);
 
-            for (j = 0; j < alienTraverse[i].length; j++) {
-                console.log((alienTraverse[i][j] + 1) % width);
-                if ((alienTraverse[i][j] + 1) % width > 0) {
-                    alienTraverse[i][j]++;
-                } else { break }
+        if ((rghtEdge === 0) || dir === -1) {
+            dir = -1;   // <<
+            if (leftEdge === 0) {
+                dir = 1;
             }
-            alienTraverse[i].forEach((pos) => gameGrid.eq(pos).addClass("invader"));
+        } else dir = 1; // >>
+
+        for (let i = 0; i < alienTraverse.length; i++) {
+            gameGrid.eq(alienTraverse[i]).removeClass("invader");
+            alienTraverse[i] += dir;
         }
-
-        console.log("hey");
-    }, 1000);
-
+        for (let i = 0; i < alienTraverse.length; i++) {
+            gameGrid.eq(alienTraverse[i]).addClass("invader");
+        }
+    }, 900)
 
 
 
@@ -58,7 +56,6 @@ $(document).ready(() => {
             // right Arrow key >>
             case 39:
                 if ((spaceshipTraverse + 1) % width > 0) spaceshipTraverse++;
-                // console.log(spaceshipTraverse + " // " + spaceshipTraverse % width);
                 break;
             // left Arrow key  <<
             case 37:
