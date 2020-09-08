@@ -81,14 +81,17 @@ $(document).ready(() => {
         if (e.which === 32) {
             let laser = spaceshipTraverse - 12;
             gameGrid.eq(laser).addClass("laser");
-            // window.setInterval(() => {
-            for (let i = 0; i < height - 2; i++) {
+
+            time = 0;
+            const shootLaster = setInterval(() => {
                 gameGrid.eq(laser).removeClass("laser");
                 laser -= 12;
-                console.log(laser);
-                gameGrid.eq(laser).addClass("laser");
-            }
-            // }, 500);
+                if (laser <= 0) {
+                    clearInterval(shootLaster);
+                } else {
+                    gameGrid.eq(laser).addClass("laser");
+                }
+            }, 30);
         }
     });
 
